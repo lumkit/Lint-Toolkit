@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Lint Toolkit</string>
+    <string name="title_splash">设置向导</string>
+    <string name="text_welcome">欢迎</string>
+    <string name="previous">上一步</string>
+    <string name="next">下一步</string>
+    <string name="cancel">取消</string>
+    <string name="finish">完成</string>
+    <string name="welcome_screen_tips">欢迎使用%s，该向导将为Lint Toolkit设置运行环境。</string>
+    <string name="select_ui_theme">选择UI主题色</string>
+    <string name="select_ui_theme_tip">默认为跟随系统</string>
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+</resources>
