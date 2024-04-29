@@ -12,9 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import linttoolkit.app.generated.resources.Res
 import linttoolkit.app.generated.resources.app_name
-import linttoolkit.app.generated.resources.welcome_screen_tips
+import linttoolkit.app.generated.resources.text_welcome_screen_tips
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun WelcomeScreen() {
     Column(
@@ -23,7 +25,7 @@ fun WelcomeScreen() {
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {
         Text(
-            text = String.format(stringResource(Res.string.welcome_screen_tips), stringResource(Res.string.app_name)),
+            text = String.format(stringResource(Res.string.text_welcome_screen_tips), stringResource(Res.string.app_name)),
             style = MaterialTheme.typography.bodyMedium
         )
     }

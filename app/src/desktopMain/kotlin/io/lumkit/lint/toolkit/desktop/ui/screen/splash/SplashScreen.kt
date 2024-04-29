@@ -1,14 +1,11 @@
 package io.lumkit.lint.toolkit.desktop.ui.screen.splash
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,20 +17,19 @@ import io.github.lumkit.desktop.preferences.LocalSharedPreferences
 import io.github.lumkit.desktop.ui.LintWindow
 import io.github.lumkit.desktop.ui.components.LintButton
 import io.github.lumkit.desktop.ui.components.LintOutlinedButton
+import io.github.lumkit.desktop.ui.theme.AnimatedLintTheme
 import io.lumkit.lint.toolkit.desktop.LocalApplication
 import io.lumkit.lint.toolkit.desktop.core.Const
+import io.lumkit.lint.toolkit.desktop.data.LoadState
 import io.lumkit.lint.toolkit.desktop.model.SplashActivity
 import io.lumkit.lint.toolkit.desktop.ui.components.Logo
 import io.lumkit.lint.toolkit.desktop.ui.screen.initialization.InitializationScreen
-import io.lumkit.lint.toolkit.desktop.ui.theme.LintToolkitTheme
 import kotlinx.coroutines.launch
 import linttoolkit.app.generated.resources.*
-import linttoolkit.app.generated.resources.Res
-import linttoolkit.app.generated.resources.app_name
-import linttoolkit.app.generated.resources.ic_logo
-import linttoolkit.app.generated.resources.title_splash
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import kotlin.system.exitProcess
 
 class SplashScreen : Screen {
 
@@ -51,19 +47,25 @@ class SplashScreen : Screen {
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
 @Composable
 private fun Splash() {
-    val applicationScope = LocalApplication.current
+    val sharedPreferences = LocalSharedPreferences.current
+    val navigator = LocalNavigator.currentOrThrow
+
     LintWindow(
-        onCloseRequest = applicationScope::exitApplication,
-        title = String.format("%s %s", stringResource(Res.string.app_name), stringResource(Res.string.title_splash)),
+        onCloseRequest = { exitProcess(0) },
+        title = String.format("%s %s", stringResource(Res.string.app_name), stringResource(Res.string.label_splash)),
         icon = painterResource(Res.drawable.ic_logo),
         resizable = false
     ) {
-        LintToolkitTheme(
+        AnimatedLintTheme(
             modifier = Modifier.fillMaxSize(),
         ) {
+            var agreeAllComponents by remember { mutableStateOf(false) }
+            var installState by remember { mutableStateOf<LoadState>(LoadState.Loading("installState")) }
+            var onStartInstall by remember { mutableStateOf(false) }
+
             val activities = arrayOf(
                 SplashActivity(
                     title = stringResource(Res.string.text_welcome),
@@ -71,9 +73,18 @@ private fun Splash() {
                     screen = { WelcomeScreen() }
                 ),
                 SplashActivity(
-                    title = stringResource(Res.string.select_ui_theme),
-                    subtitle = stringResource(Res.string.select_ui_theme_tip),
+                    title = stringResource(Res.string.label_select_ui_theme),
+                    subtitle = stringResource(Res.string.label_select_ui_theme_tip),
                     screen = { UiThemeScreen() }
+                ),
+                SplashActivity(
+                    title = stringResource(Res.string.label_license_agreement),
+                    subtitle = stringResource(Res.string.label_license_agreement_tips),
+                    screen = { LicenseAgreementScreen { agreeAllComponents = it } }
+                ),
+                SplashActivity(
+                    title = stringResource(Res.string.label_install_components),
+                    screen = { InstallScreen(onStartInstall = { onStartInstall = true }) { installState = it } }
                 ),
             )
 
@@ -117,9 +128,9 @@ private fun Splash() {
                                         }
                                     }
                                 },
-                                enabled = pagerState.currentPage > 0
+                                enabled = pagerState.currentPage > 0 && !onStartInstall
                             ) {
-                                Text(stringResource(Res.string.previous))
+                                Text(stringResource(Res.string.text_previous))
                             }
                             LintButton(
                                 onClick = {
@@ -130,24 +141,28 @@ private fun Splash() {
                                     }
                                 },
                                 enabled = when(pagerState.currentPage) {
-                                    0 -> true
+                                    0, 1 -> true
+                                    2 -> agreeAllComponents && pagerState.currentPage < pagerState.pageCount - 1
                                     else -> false
                                 }
                             ) {
-                                Text(stringResource(Res.string.next))
+                                Text(stringResource(Res.string.text_next))
                             }
                             LintOutlinedButton(
-                                onClick = applicationScope::exitApplication,
+                                onClick = { exitProcess(0) },
                             ) {
-                                Text(stringResource(Res.string.cancel))
+                                Text(stringResource(Res.string.text_cancel))
                             }
                             LintButton(
                                 onClick = {
-
+                                    if (pagerState.currentPage == activities.size - 1 && installState is LoadState.Success) {
+                                        sharedPreferences.put(Const.INITIALIZATION, true)
+                                        navigator.push(InitializationScreen())
+                                    }
                                 },
-                                enabled = pagerState.currentPage == activities.size - 1
+                                enabled = pagerState.currentPage == activities.size - 1 && installState is LoadState.Success
                             ) {
-                                Text(stringResource(Res.string.finish))
+                                Text(stringResource(Res.string.text_finish))
                             }
                         }
                     }
@@ -156,9 +171,9 @@ private fun Splash() {
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.padding(it).fillMaxSize().padding(16.dp),
-                    userScrollEnabled = false
-                ) {
-                    activities[it].screen()
+                    userScrollEnabled = false,
+                ) { index ->
+                    activities[index].screen()
                 }
             }
         }

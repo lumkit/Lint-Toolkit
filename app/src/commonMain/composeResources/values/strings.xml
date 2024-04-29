@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Lint Toolkit</string>
+    <string name="label_splash">设置向导</string>
+    <string name="text_welcome">欢迎</string>
+    <string name="text_previous">上一步</string>
+    <string name="text_next">下一步</string>
+    <string name="text_cancel">取消</string>
+    <string name="text_finish">完成</string>
+    <string name="text_welcome_screen_tips">欢迎使用%s，该向导将为Lint Toolkit设置界面风格和运行环境。</string>
+    <string name="label_select_ui_theme">选择UI主题色</string>
+    <string name="label_select_ui_theme_tip">默认为跟随系统</string>
+    <string name="text_theme_system">跟随系统</string>
+    <string name="text_theme_light">浅色</string>
+    <string name="text_theme_dark">深色</string>
+    <string name="label_license_agreement">协议与许可</string>
+    <string name="label_license_agreement_tips">阅读并同意安装组件的许可</string>
+    <string name="text_components">组件</string>
+    <string name="text_components_adb">ADB客户端</string>
+    <string name="text_components_adb_license">ADB（Android Debug Bridge）客户端是一个多功能工具，允许开发者与安卓设备进行通信，主要用于调试应用和设备。ADB 是一个命令行界面，它是 Google Android SDK 的一部分，通过USB、Wi-Fi或其他连接方式与设备进行通信。</string>
+    <string name="text_components_aapt">AAPT工具</string>
+    <string name="text_components_aapt_license">AAPT（Android Asset Packaging Tool）是一个用于处理安卓应用资源的工具，它是 Android 开发工具链的一部分。AAPT 主要用于编译应用的资源，将它们打包成 Android 平台可以使用的二进制格式。</string>
+    <string name="text_components_python">Python 3.12.3 X64运行时</string>
+    <string name="text_components_python_license">Python 3.12.3 X64运行时是运行Python脚本所必须的环境，该组件为Lint Toolkit提供了执行py脚本的能力。</string>
+    <string name="text_components_lint_toolkit_components">Lint Toolkit必要的运行组件</string>
+    <string name="text_components_lint_toolkit_components_license">此组件包含了Lint Toolkit运行所必要的代码、脚本以及一些二进制文件</string>
+    <string name="label_install_components">安装组件</string>
+</resources>

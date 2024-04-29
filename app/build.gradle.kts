@@ -8,20 +8,20 @@ plugins {
 kotlin {
     jvm("desktop")
 
+    jvmToolchain(17)
     sourceSets {
         val desktopMain by getting
 
         commonMain.dependencies {
-            implementation(compose.foundation)
-            implementation(compose.runtimeSaveable)
-            implementation(compose.components.uiToolingPreview)
             implementation(compose.components.resources)
+            implementation(compose.materialIconsExtended)
         }
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
 
             implementation(libs.lint.ui)
+            implementation(project(":terminal"))
 
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.screenModel)
@@ -29,6 +29,12 @@ kotlin {
             implementation(libs.voyager.tabNavigator)
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.kodein)
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.java)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.gson)
+            implementation(libs.ktor.client.encoding)
         }
     }
 }
@@ -38,9 +44,9 @@ compose.desktop {
         val appPackageName: String by project
 
         mainClass = "io.lumkit.lint.toolkit.desktop.LintApplicationKt"
-        jvmArgs += listOf("-DappVersion=${libs.versions.lint.toolkit.get()}", "-DappPackageName=$appPackageName")
+        jvmArgs += listOf("-Dfile.encoding=UTF-8", "-DappVersion=${libs.versions.lint.toolkit.get()}", "-DappPackageName=$appPackageName")
 
-        javaHome = System.getenv("JDK_22")
+//        javaHome = System.getenv("JDK_22")
 
 //        buildTypes.release.proguard {
 //            configurationFiles.from(project.file("compose-desktop.pro"))
@@ -58,7 +64,7 @@ compose.desktop {
             description = "An Android geek toolbox for Windows 7+ platform."
             copyright = "© 2024 io.github.lumkit. All rights reserved."
             vendor = "io.github.lumkit"
-//            licenseFile.set(project.file("static/LICENSE.txt"))
+            licenseFile.set(project.file("static/LICENSE.txt"))
 
             windows {
                 msiPackageVersion = libs.versions.lint.toolkit.get()

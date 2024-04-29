@@ -16,8 +16,7 @@ import androidx.compose.ui.unit.dp
 import io.github.lumkit.desktop.ui.theme.LocalThemeStore
 import linttoolkit.app.generated.resources.*
 import linttoolkit.app.generated.resources.Res
-import linttoolkit.app.generated.resources.logo_background
-import linttoolkit.app.generated.resources.logo_mid
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @Preview
@@ -26,6 +25,7 @@ private fun LogoPreview() {
     Logo(modifier = Modifier.size(400.dp))
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Logo(
     modifier: Modifier = Modifier,
@@ -66,6 +66,7 @@ fun Logo(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AnimatedLogo(
     modifier: Modifier = Modifier,

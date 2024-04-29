@@ -21,6 +21,9 @@ pluginManagement {
         maven("https://maven.aliyun.com/repositories/central")
     }
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+}
 
 dependencyResolutionManagement {
     repositories {
@@ -42,3 +45,6 @@ dependencyResolutionManagement {
 }
 
 include(":app")
+include("terminal")
+include(":terminal:core")
+include(":terminal:ui")

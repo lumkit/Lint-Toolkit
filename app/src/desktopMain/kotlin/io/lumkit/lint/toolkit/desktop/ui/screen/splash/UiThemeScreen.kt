@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -15,14 +14,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.github.lumkit.desktop.data.DarkThemeMode
 import io.github.lumkit.desktop.ui.components.LintCard
-import io.github.lumkit.desktop.ui.components.LintOutlineCard
 import io.github.lumkit.desktop.ui.theme.LocalThemeStore
 import io.lumkit.lint.toolkit.desktop.ui.components.AnimatedLogo
 import linttoolkit.app.generated.resources.Res
-import linttoolkit.app.generated.resources.theme_dark
-import linttoolkit.app.generated.resources.theme_light
+import linttoolkit.app.generated.resources.text_theme_dark
+import linttoolkit.app.generated.resources.text_theme_light
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun UiThemeScreen() {
     val themeStore = LocalThemeStore.current
@@ -50,7 +50,7 @@ fun UiThemeScreen() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 RadioButton(selected = themeStore.darkTheme == DarkThemeMode.LIGHT, onClick = null)
-                Text(stringResource(Res.string.theme_light))
+                Text(stringResource(Res.string.text_theme_light))
             }
             MaterialTheme(
                 colorScheme = themeStore.colorSchemes.light
@@ -93,7 +93,7 @@ fun UiThemeScreen() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 RadioButton(selected = themeStore.darkTheme == DarkThemeMode.DARK, onClick = null)
-                Text(stringResource(Res.string.theme_dark))
+                Text(stringResource(Res.string.text_theme_dark))
             }
             MaterialTheme(
                 colorScheme = themeStore.colorSchemes.dark
