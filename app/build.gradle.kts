@@ -15,6 +15,13 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.components.resources)
             implementation(compose.materialIconsExtended)
+
+            val composeBom = project.dependencies.platform(libs.androidx.compose.bom)
+            implementation(composeBom)
+
+            implementation(libs.androidx.compose.materialWindow)
+
+            implementation(libs.coil)
         }
 
         desktopMain.dependencies {
@@ -35,6 +42,9 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.gson)
             implementation(libs.ktor.client.encoding)
+
+            implementation(libs.coil.compose.jvm)
+            implementation(libs.coil.network.ktor.jvm)
         }
     }
 }

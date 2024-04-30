@@ -3,10 +3,13 @@ compose = "1.6.2"
 compose-plugin = "1.6.0"
 junit = "4.13.2"
 kotlin = "1.9.22"
+androidx-compose-bom = "2024.04.01"
 lint-ui = "1.0.4"
 lint-toolkit = "1.0.0"
 voyager = "1.0.0"
 ktor = "2.3.10"
+compose-fluent = "0.0.1-dev.7"
+coil3 = "3.0.0-alpha06"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -14,6 +17,9 @@ kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
+androidx-compose-materialWindow = { module = "androidx.compose.material3:material3-window-size-class" }
 
 lint-ui = { module = "io.github.lumkit:lint-compose-ui", version.ref = "lint-ui" }
 
@@ -30,6 +36,10 @@ ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktor" }
 ktor-client-encoding = { module = "io.ktor:ktor-client-encoding", version.ref = "ktor" }
+
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
+coil-compose-jvm = { module = "io.coil-kt.coil3:coil-compose-jvm", version.ref = "coil3" }
+coil-network-ktor-jvm = { module = "io.coil-kt.coil3:coil-network-ktor-jvm", version.ref = "coil3" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

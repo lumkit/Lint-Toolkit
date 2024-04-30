@@ -24,4 +24,8 @@
     <string name="text_components_lint_toolkit_components">Lint Toolkit必要的运行组件</string>
     <string name="text_components_lint_toolkit_components_license">此组件包含了Lint Toolkit运行所必要的代码、脚本以及一些二进制文件</string>
     <string name="label_install_components">安装组件</string>
+    <string name="text_home">主页</string>
+    <string name="text_not_login">未登录</string>
+    <string name="text_hint_search_features">搜索功能项</string>
+    <string name="text_payload_dumper">Payload提取镜像</string>
 </resources>
