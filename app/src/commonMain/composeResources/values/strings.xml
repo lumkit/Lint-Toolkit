@@ -28,4 +28,6 @@
     <string name="text_not_login">未登录</string>
     <string name="text_hint_search_features">搜索功能项</string>
     <string name="text_payload_dumper">Payload提取镜像</string>
+    <string name="text_recommend_payload_dumper">从ROM中提取BOOT</string>
+    <string name="text_click_left_nav">点击左侧</string>
 </resources>

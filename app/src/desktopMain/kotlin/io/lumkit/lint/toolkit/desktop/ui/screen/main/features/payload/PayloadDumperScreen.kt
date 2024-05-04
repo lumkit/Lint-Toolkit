@@ -1,36 +1,31 @@
 package io.lumkit.lint.toolkit.desktop.ui.screen.main.features.payload
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.TableView
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import io.github.lumkit.desktop.ui.components.LintOutlinedTextField
+import androidx.compose.runtime.Composable
 import io.lumkit.lint.toolkit.desktop.ui.screen.main.FeatureScreen
+import linttoolkit.app.generated.resources.Res
+import linttoolkit.app.generated.resources.text_payload_dumper
+import linttoolkit.app.generated.resources.text_recommend_payload_dumper
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 
+@OptIn(ExperimentalResourceApi::class)
 class PayloadDumperScreen(
     val name: String,
-    val navText: String,
 ) : FeatureScreen(
+    recommend = true,
+    recommendText = Res.string.text_recommend_payload_dumper,
     label = name,
-    nav = navText,
+    path = arrayOf(
+        Res.string.text_payload_dumper
+    ),
     icon = {
         Icon(imageVector = Icons.Default.TableView, contentDescription = null)
     }
 ) {
     @Composable
     override fun Content() {
-        Column {
-            Text(name)
-            val text by PayloadViewModel.text.collectAsState()
-            LintOutlinedTextField(
-                value = text,
-                onValueChange = { PayloadViewModel.setText(it) },
-            )
 
-            Text(text)
-        }
     }
 }

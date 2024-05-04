@@ -5,6 +5,9 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -22,7 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.lumkit.desktop.ui.LintWindow
 import io.github.lumkit.desktop.ui.theme.AnimatedLintTheme
 import io.lumkit.lint.toolkit.desktop.ui.navigation.NavigationContent
@@ -33,10 +38,6 @@ import io.lumkit.lint.toolkit.desktop.ui.window.LintContentType
 import io.lumkit.lint.toolkit.desktop.ui.window.LintNavigationType
 import kotlinx.coroutines.launch
 import linttoolkit.app.generated.resources.*
-import linttoolkit.app.generated.resources.Res
-import linttoolkit.app.generated.resources.app_name
-import linttoolkit.app.generated.resources.ic_logo
-import linttoolkit.app.generated.resources.ic_navigation
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -114,14 +115,17 @@ private fun MainScreenContent() {
                     arrayListOf(
                         HomeScreen(
                             name = stringResource(Res.string.text_home),
-                            navText = stringResource(Res.string.text_home),
                         ),
                         PayloadDumperScreen(
                             name = stringResource(Res.string.text_payload_dumper),
-                            navText = stringResource(Res.string.text_payload_dumper),
                         )
                     )
                 )
+
+                val homeScreen = featureScreens.first() as HomeScreen
+                homeScreen.screens.clear()
+                homeScreen.screens.addAll(featureScreens)
+                featureScreens[0] = homeScreen
             }
 
             CompositionLocalProvider(
@@ -240,7 +244,7 @@ fun LintAppContent(
                         }
                     },
                     title = {
-
+                        Title()
                     }
                 )
             }
@@ -264,6 +268,22 @@ fun LintAppContent(
                     screen.Content()
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+private fun Title() {
+    val listState = rememberLazyListState()
+    val navigator = LocalNavigator.currentOrThrow
+    val lastItem = navigator.lastItem as FeatureScreen
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        state = listState,
+    ) {
+        items(lastItem.path) {
+
         }
     }
 }
