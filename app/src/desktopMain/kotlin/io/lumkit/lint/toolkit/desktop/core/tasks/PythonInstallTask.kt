@@ -21,6 +21,12 @@ class PythonInstallTask(
     url = "https://gitee.com/lumyuan/Lint-Toolkit-Repository/releases/download/1.0.0/python-3.12.3-amd64.exe",
 ) {
     override suspend fun run(onProgressChanged: (Float) -> Unit) {
+        val isInstalled = CommandExecutor.executeCommand(arrayListOf("python", "--version")).startsWith("Python")
+        if (isInstalled) {
+            logState.value += "Skip Python installation task: Python runtime is already installed on the device.\n\n"
+            return
+        }
+
         ktorClient.prepareGet(url).execute {
             val dir = File(context.getFilesDir(), Paths runtime "python-3.12.3-amd64")
             if (!dir.exists()) {

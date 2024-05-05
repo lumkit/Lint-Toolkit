@@ -30,4 +30,10 @@
     <string name="text_payload_dumper">Payload提取镜像</string>
     <string name="text_recommend_payload_dumper">从ROM中提取BOOT</string>
     <string name="text_click_left_nav">点击左侧</string>
+    <string name="label_payload_path">payload.bin文件路径</string>
+    <string name="label_payload_output_path">镜像输出路径</string>
+    <string name="text_choose_file">选择文件</string>
+    <string name="text_choose_dir">选择文件夹</string>
+    <string name="text_choose_file_payload">选择从ROM中解压出来的payload.bin文件</string>
+    <string name="format_payload_part_tooltips">大小：%s</string>
 </resources>

@@ -11,6 +11,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,32 +20,27 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.lumkit.desktop.lifecycle.viewModel
 import io.lumkit.lint.toolkit.desktop.ui.screen.main.FeatureScreen
+import io.lumkit.lint.toolkit.desktop.ui.screen.main.MainViewModel
 import linttoolkit.app.generated.resources.Res
 import linttoolkit.app.generated.resources.text_click_left_nav
-import linttoolkit.app.generated.resources.text_home
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class)
 class HomeScreen(
     val name: String,
 ) : FeatureScreen(
+    tag = "HOME",
     label = name,
-    path = arrayOf(
-        Res.string.text_home
-    ),
     icon = {
         Icon(imageVector = Icons.Default.Home, contentDescription = null)
     }
 ) {
-
-    var screens: ArrayList<FeatureScreen> = arrayListOf()
-
-    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val mainViewModel = viewModel<MainViewModel>()
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -52,8 +49,9 @@ class HomeScreen(
                 modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                screens.filter { it.recommendText != null }.forEach {
-                    RecommendItem(it) { navigator.push(it) }
+                val screens by mainViewModel.featureScreen.collectAsState()
+                screens?.filter { it.value.recommendText != null && it.value.recommend }?.forEach {
+                    RecommendItem(it.value) { navigator.push(it.value) }
                 }
             }
         }
@@ -72,7 +70,7 @@ private fun RecommendItem(screen: FeatureScreen, onClick: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = screen.recommendText?.let { stringResource(it) } ?: "",
+            text = screen.recommendText ?: "",
             style = MaterialTheme.typography.bodyMedium,
         )
         Row(

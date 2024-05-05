@@ -18,10 +18,13 @@ import io.github.lumkit.desktop.context.LocalContext
 import io.github.lumkit.desktop.preferences.LocalSharedPreferences
 import io.lumkit.lint.toolkit.desktop.core.tasks.AaptInstallTask
 import io.lumkit.lint.toolkit.desktop.core.tasks.AdbInstallTask
+import io.lumkit.lint.toolkit.desktop.core.tasks.LintRuntimesInstallTask
 import io.lumkit.lint.toolkit.desktop.core.tasks.PythonInstallTask
 import io.lumkit.lint.toolkit.desktop.data.LoadState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import linttoolkit.app.generated.resources.JetBrainsMono_Regular
 import linttoolkit.app.generated.resources.Res
@@ -46,6 +49,7 @@ fun InstallScreen(
             AdbInstallTask(context, sharedPreferences, log),
             AaptInstallTask(context, sharedPreferences, log),
             PythonInstallTask(context, log),
+            LintRuntimesInstallTask(context, sharedPreferences, log)
         )
     }
 
@@ -89,6 +93,11 @@ fun InstallScreen(
 
     onStartInstall()
     LaunchedEffect(Unit) {
+        snapshotFlow { log.value }
+            .onEach {
+                verticalScrollState.animateScrollTo(verticalScrollState.maxValue)
+            }.launchIn(this)
+
         if (!started) {
             started = true
             withContext(Dispatchers.IO) {
@@ -97,7 +106,9 @@ fun InstallScreen(
                     tasks.forEach {
                         progress = 0f
                         log.value += "Start ${it.name}\n"
-                        log.value += "Download Source: ${it.url}\n"
+                        if (it.url.isNotEmpty()) {
+                            log.value += "Download Source: ${it.url}\n"
+                        }
                         it.run { p ->
                             progress = p
                         }
@@ -105,6 +116,7 @@ fun InstallScreen(
                         delay(1000)
                     }
                     onInstalled(LoadState.Success("installState"))
+                    log.value += "\nINSTALL SUCCESSFUL"
                 } catch (e: Exception) {
                     e.printStackTrace()
                     log.value += "\nInstallation Failed: ${e.message}\n"

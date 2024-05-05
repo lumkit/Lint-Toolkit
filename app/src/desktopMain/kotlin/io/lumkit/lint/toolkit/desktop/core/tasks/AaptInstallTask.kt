@@ -25,7 +25,7 @@ class AaptInstallTask(
 ) {
     override suspend fun run(onProgressChanged: (Float) -> Unit) {
         ktorClient.prepareGet(url).execute {
-            val dir = File(context.getFilesDir(), Paths runtime "aapt")
+            val dir = File(context.getFilesDir(), Paths runtime Const.NAME_AAPT)
             if (!dir.exists()) {
                 dir.mkdirs()
             }

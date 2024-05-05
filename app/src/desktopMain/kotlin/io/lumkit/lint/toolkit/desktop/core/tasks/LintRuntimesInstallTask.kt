@@ -10,27 +10,32 @@ import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
 import io.lumkit.lint.toolkit.desktop.core.Const
 import io.lumkit.lint.toolkit.desktop.core.Paths
+import io.lumkit.lint.toolkit.desktop.core.shell.CommandExecutor
 import io.lumkit.lint.toolkit.desktop.model.LintInstallTask
 import io.lumkit.lint.toolkit.desktop.net.ktor.ktorClient
 import io.lumkit.lint.toolkit.desktop.util.ZipUtils
 import java.io.File
 
-class AdbInstallTask(
+class LintRuntimesInstallTask(
     private val context: Context,
     private val sharedPreferences: SharedPreferences,
     private val logState: MutableState<String>
 ) : LintInstallTask(
-    name = "ADB Installation Task",
-    url = "https://dl.google.com/android/repository/platform-tools-latest-windows.zip",
+    name = "Lint Runtimes Installation Task",
+    url = "",
 ) {
     override suspend fun run(onProgressChanged: (Float) -> Unit) {
-        ktorClient.prepareGet(url).execute {
-            val dir = File(context.getFilesDir(), Paths runtime Const.NAME_ADB)
+
+        logState.value += "Downloading Payload Dumper Scripts: https://gitee.com/lumyuan/Lint-Toolkit-Repository/releases/download/1.0.0/payload_dumper.zip\n"
+
+        // payload dumper url
+        ktorClient.prepareGet("https://gitee.com/lumyuan/Lint-Toolkit-Repository/releases/download/1.0.0/payload_dumper.zip").execute {
+            val dir = File(context.getFilesDir(), Paths runtime Const.NAME_PAYLOAD_DUMPER)
             if (!dir.exists()) {
                 dir.mkdirs()
             }
 
-            val cancelFile = File(dir, "adb.zip")
+            val cancelFile = File(dir, "${Const.NAME_PAYLOAD_DUMPER}.zip")
             if (cancelFile.exists()) {
                 cancelFile.delete()
             }
@@ -48,13 +53,25 @@ class AdbInstallTask(
                 }
             }
 
-            logState.value += "Unzipping...\n"
-            onProgressChanged(0f)
+            logState.value += "Zipping...\n"
             ZipUtils.unzip(cancelFile.absolutePath, dir.absolutePath) { p -> onProgressChanged(p) }
-            sharedPreferences.put(Const.RUNTIME_ADB_PATH, File(dir, "platform-tools").absolutePath)
             cancelFile.delete()
-            onProgressChanged(1f)
-            logState.value += "ADB Runtime installed.\n\n"
+            logState.value += "Payload Dumper Scripts zip finished.\n\n"
+            sharedPreferences.putString(Const.RUNTIME_PAYLOAD_DUMPER, dir.absolutePath)
+
+            val result = CommandExecutor.executeCommandWithWorkingDirectory(
+                arrayListOf(
+                    "python",
+                    "-m",
+                    "pip",
+                    "install",
+                    "-r",
+                    "requirements.txt"
+                ), dir.absolutePath
+            )
+            logState.value += result
         }
+
+
     }
 }

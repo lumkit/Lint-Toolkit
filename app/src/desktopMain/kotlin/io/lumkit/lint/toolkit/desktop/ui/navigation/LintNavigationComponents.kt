@@ -1,15 +1,20 @@
 package io.lumkit.lint.toolkit.desktop.ui.navigation
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,9 +27,11 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
+import io.github.lumkit.desktop.lifecycle.viewModel
 import io.github.lumkit.desktop.ui.components.LintSideNavigationBar
 import io.github.lumkit.desktop.ui.components.LintTextField
 import io.lumkit.lint.toolkit.desktop.ui.screen.main.FeatureScreen
+import io.lumkit.lint.toolkit.desktop.ui.screen.main.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -34,15 +41,16 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun NavigationContent(
-    searchText: MutableState<String>,
-    featureScreens: SnapshotStateList<FeatureScreen>,
+    featureScreens: List<FeatureScreen>,
     onClose: (() -> Unit)? = null,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val currentScreen = navigator.lastItem
+    val mainViewModel = viewModel<MainViewModel>()
+    val searchText = mainViewModel.searchText.collectAsState()
 
     Scaffold(
         topBar = {
@@ -90,7 +98,7 @@ fun NavigationContent(
                                         searchText.value.isNotEmpty()
                             }.sortedBy { screen -> screen.label }
                         )
-                    }.flowOn(Dispatchers.IO)
+                    }
                     .launchIn(this)
             }
 
@@ -99,7 +107,7 @@ fun NavigationContent(
             ) {
                 LintTextField(
                     value = searchText.value,
-                    onValueChange = { searchText.value = it },
+                    onValueChange = mainViewModel::setSearchText,
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = {
                         Text(stringResource(Res.string.text_hint_search_features))
@@ -114,7 +122,7 @@ fun NavigationContent(
                                     .size(24.dp)
                                     .clip(CircleShape)
                                     .clickable {
-                                        searchText.value = ""
+                                        mainViewModel.setSearchText("")
                                     }.padding(6.dp)
                             )
                         }
@@ -132,11 +140,37 @@ fun NavigationContent(
                         DropdownMenuItem(
                             leadingIcon = feature.icon,
                             text = {
-                                Text(feature.label)
+                                Column {
+                                    if (feature.navPath.size > 1) {
+                                        Text(feature.label, style = MaterialTheme.typography.labelMedium)
+                                        FlowRow(
+                                            modifier = Modifier.horizontalScroll(rememberScrollState()),
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                                        ) {
+                                            feature.navPath.forEachIndexed { index, tag ->
+                                                val screensMap by mainViewModel.featureScreen.collectAsState()
+                                                Text(
+                                                    text = screensMap?.get(tag)?.label ?: "",
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                )
+                                                if (index < feature.navPath.lastIndex) {
+                                                    Icon(
+                                                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(16.dp)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        Text(feature.label, style = MaterialTheme.typography.labelMedium)
+                                    }
+                                }
                             },
                             onClick = {
-                                navigator.push(feature)
-                                searchText.value = ""
+                                navigator.pushSingle(feature)
+                                mainViewModel.setSearchText("")
                             }
                         )
                     }
@@ -214,7 +248,7 @@ private fun NavigationItem(navigator: Navigator, screen: FeatureScreen, currentS
             }
         },
         onClick = {
-            navigator.push(screen)
+            navigator.pushSingle(screen)
         }
     )
 }

@@ -39,7 +39,7 @@ class SplashScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
 
         if (sharedPreferences.get<Boolean?>(Const.INITIALIZATION) == true) {
-            navigator.push(InitializationScreen())
+            navigator.replaceAll(InitializationScreen())
         } else {
             Splash()
         }
