@@ -3,6 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 kotlin {
@@ -39,8 +40,9 @@ kotlin {
 
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.java)
+            implementation(libs.ktor.client.okhttp)
             implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.gson)
+            implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.encoding)
 
             implementation(libs.coil.compose.jvm)
@@ -60,7 +62,7 @@ compose.desktop {
 
 //        buildTypes.release.proguard {
 //            configurationFiles.from(project.file("compose-desktop.pro"))
-//            obfuscate.set(true)
+//            obfuscate.set(false)
 //        }
 
         nativeDistributions {

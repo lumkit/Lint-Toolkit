@@ -1,11 +1,10 @@
 package io.lumkit.lint.toolkit.desktop.ui.screen.main.features.payload
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.ScrollbarAdapter
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.ui.text.input.TextFieldValue
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import io.github.lumkit.desktop.context.ContextWrapper
+import io.github.lumkit.desktop.context.Toast
+import io.github.lumkit.desktop.context.Toast.showToast
 import io.github.lumkit.desktop.lifecycle.ViewModel
 import io.github.lumkit.desktop.preferences.SharedPreferences
 import io.lumkit.lint.toolkit.desktop.core.Const
@@ -17,14 +16,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import linttoolkit.app.generated.resources.Res
+import linttoolkit.app.generated.resources.text_derive_toast
+import linttoolkit.app.generated.resources.text_task_canceled
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.getString
 
 class PayloadDumperViewModel : ViewModel() {
 
     enum class ItemColumns(val count: Int) {
         SINGLE(1), DOUBLE(2)
     }
-
-    private val gson = Gson()
 
     private val _binPath = MutableStateFlow(TextFieldValue())
     val binPath: StateFlow<TextFieldValue> = _binPath.asStateFlow()
@@ -44,11 +47,17 @@ class PayloadDumperViewModel : ViewModel() {
     private val _listColumns = MutableStateFlow(ItemColumns.DOUBLE)
     val listColumns: StateFlow<ItemColumns> = _listColumns.asStateFlow()
 
+    private val _searchState = MutableStateFlow(TextFieldValue())
+    val searchState: StateFlow<TextFieldValue> = _searchState.asStateFlow()
+
+    private val _messageState = MutableStateFlow("")
+    val messageState: StateFlow<String> = _messageState.asStateFlow()
+
+    private val _dialogShowState = MutableStateFlow(false)
+    val dialogShowState: StateFlow<Boolean> = _dialogShowState.asStateFlow()
+
     val listState = MutableStateFlow(
-        LazyStaggeredGridState(
-            0,
-            0
-        )
+        LazyGridState()
     ).asStateFlow()
 
     fun setBinPath(path: TextFieldValue) {
@@ -63,6 +72,18 @@ class PayloadDumperViewModel : ViewModel() {
         _loadState.value = loadState
     }
 
+    fun setListColumns(columns: ItemColumns) {
+        _listColumns.value = columns
+    }
+
+    fun setSearchState(state: TextFieldValue) {
+        _searchState.value = state
+    }
+
+    fun setDialogState(isShow: Boolean) {
+        _dialogShowState.value = isShow
+    }
+
     suspend fun loadParts(sharedPreferences: SharedPreferences, filePath: String) = withContext(Dispatchers.IO) {
         _loadState.value = LoadState.Loading("loadParts")
         val result = CommandExecutor.executeCommandWithWorkingDirectory(
@@ -74,10 +95,11 @@ class PayloadDumperViewModel : ViewModel() {
             ), sharedPreferences.getString(Const.RUNTIME_PAYLOAD_DUMPER) ?: ""
         ).trim()
         try {
-            _parts.value = gson.fromJson(result, object : TypeToken<List<PayloadPart>>() {}.type)
+            _parts.value = Json.decodeFromString(result)
             _loadState.value = LoadState.Success("loadParts")
         } catch (e: Exception) {
             e.printStackTrace()
+            _parts.value = listOf()
             _loadState.value = LoadState.Failure("loadParts")
         }
     }
@@ -86,4 +108,47 @@ class PayloadDumperViewModel : ViewModel() {
         _selectedParts.value = parts
     }
 
+    @OptIn(ExperimentalResourceApi::class)
+    suspend fun startDeriveImages(context: ContextWrapper, sharedPreferences: SharedPreferences) = withContext(Dispatchers.IO) {
+        _dialogShowState.value = true
+        _messageState.value = ""
+        _loadState.value = LoadState.Loading("startDeriveImages")
+        var t = 0
+        var f = 0
+        try {
+            _selectedParts.value.sortedBy { it.name }
+                .forEachIndexed { index, payloadPart ->
+                    if (!_dialogShowState.value) {
+                        context.showToast(getString(Res.string.text_task_canceled), time = Toast.LENGTH_LONG)
+                        return@forEachIndexed
+                    }
+                    _messageState.value += "Start Derive Image(${index + 1}/${_selectedParts.value.size}): ${payloadPart.name}.img\n"
+                    val result = CommandExecutor.executeCommandWithWorkingDirectory(
+                        arrayListOf(
+                            "python",
+                            "payload_dumper.py",
+                            "--out",
+                            _outputPath.value.text.trim(),
+                            "--images",
+                            payloadPart.name,
+                            _binPath.value.text.trim(),
+                        ), sharedPreferences.getString(Const.RUNTIME_PAYLOAD_DUMPER) ?: ""
+                    )
+                    if (result.replace("\n", "").trimIndent().endsWith("Done")) {
+                        _messageState.value += "SUCCESSFUL.\n\n"
+                        t++
+                    } else {
+                        _messageState.value += "UNSUCCESSFUL!\n\n"
+                        f++
+                    }
+                }
+            _loadState.value = LoadState.Success("startDeriveImages")
+        }catch (e: Exception) {
+            e.printStackTrace()
+            _loadState.value = LoadState.Failure("startDeriveImages")
+        } finally {
+            context.showToast(String.format(getString(Res.string.text_derive_toast), t, f, _selectedParts.value.size), time = Toast.LENGTH_LONG)
+            _selectedParts.value = arrayListOf()
+        }
+    }
 }

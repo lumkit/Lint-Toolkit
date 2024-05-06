@@ -8,7 +8,7 @@ import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileFilter
 
-suspend fun chooseFile(contextWrapper: ContextWrapper? = null, currentDirKey: String? = null, fileFilter: FileFilter? = null): File? = withContext(Dispatchers.IO) {
+suspend fun chooseFile(contextWrapper: ContextWrapper? = null, currentDirKey: String? = null, fileFilter: FileFilter? = null, mode: Int = JFileChooser.FILES_ONLY): File? = withContext(Dispatchers.IO) {
     val sharedPreferences = contextWrapper?.getSharedPreferences(Const.APP_CONFIGURATION)
     val jf: JFileChooser = JFileChooser().apply {
         this.fileFilter = fileFilter
@@ -18,7 +18,7 @@ suspend fun chooseFile(contextWrapper: ContextWrapper? = null, currentDirKey: St
                 currentDirectory = File(it)
             }
         }
-        fileSelectionMode = JFileChooser.FILES_ONLY
+        fileSelectionMode = mode
     }
     val result = jf.showOpenDialog(contextWrapper?.getWindow())
     if (result == JFileChooser.APPROVE_OPTION) {

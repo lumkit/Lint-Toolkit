@@ -36,4 +36,13 @@
     <string name="text_choose_dir">选择文件夹</string>
     <string name="text_choose_file_payload">选择从ROM中解压出来的payload.bin文件</string>
     <string name="format_payload_part_tooltips">大小：%s</string>
+    <string name="text_derive_images">开始提取镜像文件</string>
+    <string name="text_select_all">全选</string>
+    <string name="text_search_image">搜索镜像</string>
+    <string name="text_derive_toast">提取任务执行完毕！\n成功%d个，失败%d个，共%d个</string>
+    <string name="text_please_choose_a_bin_file">请选择一个payload.bin文件</string>
+    <string name="text_no_data">暂无数据</string>
+    <string name="alert_payload_dumper">镜像提取</string>
+    <string name="text_confirm">确定</string>
+    <string name="text_task_canceled">任务已取消</string>
 </resources>

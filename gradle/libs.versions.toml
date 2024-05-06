@@ -4,12 +4,13 @@ compose-plugin = "1.6.0"
 junit = "4.13.2"
 kotlin = "1.9.22"
 androidx-compose-bom = "2024.04.01"
-lint-ui = "1.0.5"
-lint-toolkit = "1.0.0"
+lint-ui = "1.0.6"
+lint-toolkit = "1.0.1"
 voyager = "1.0.0"
 ktor = "2.3.10"
 compose-fluent = "0.0.1-dev.7"
 coil3 = "3.0.0-alpha06"
+kotlinx-serialization = "1.6.3"
 
 decompose = "3.0.0"
 decompose-lifecycle = "2.0.0"
@@ -20,6 +21,7 @@ kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
 androidx-compose-materialWindow = { module = "androidx.compose.material3:material3-window-size-class" }
@@ -37,8 +39,9 @@ voyager-kodein = { module = "cafe.adriel.voyager:voyager-kodein", version.ref = 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
-ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-encoding = { module = "io.ktor:ktor-client-encoding", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 coil-compose-jvm = { module = "io.coil-kt.coil3:coil-compose-jvm", version.ref = "coil3" }
@@ -51,3 +54,4 @@ decompose-extensions-compose = { module = "com.arkivanov.decompose:extensions-co
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

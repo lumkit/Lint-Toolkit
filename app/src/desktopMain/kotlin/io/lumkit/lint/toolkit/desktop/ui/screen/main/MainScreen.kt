@@ -23,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,8 @@ import io.github.lumkit.desktop.ui.LintWindow
 import io.github.lumkit.desktop.ui.components.LintOutlineCard
 import io.github.lumkit.desktop.ui.theme.AnimatedLintTheme
 import io.github.lumkit.desktop.ui.theme.LocalThemeStore
+import io.lumkit.lint.toolkit.desktop.ui.components.AnimatedLogo
+import io.lumkit.lint.toolkit.desktop.ui.components.Logo
 import io.lumkit.lint.toolkit.desktop.ui.navigation.NavigationContent
 import io.lumkit.lint.toolkit.desktop.ui.navigation.pushSingle
 import io.lumkit.lint.toolkit.desktop.ui.window.DisplayFeature
@@ -129,16 +132,20 @@ private fun MainScreenContent() {
                 AnimatedContent(
                     modifier = Modifier.fillMaxSize(),
                     targetState = featureScreens,
-                    transitionSpec = {
-                        fadeIn().togetherWith(fadeOut())
-                    },
                     contentAlignment = Alignment.Center
                 ) { screens ->
-                    screens?.let {
+                    if (screens != null) {
                         Navigator(
-                            screen = it.first()
+                            screen = screens.first()
                         ) { navigation ->
-                            NavigationWrapper(navigation, it)
+                            NavigationWrapper(navigation, screens)
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Logo(modifier = Modifier.size(96.dp))
                         }
                     }
                 }
@@ -210,6 +217,10 @@ private fun NavigationWrapper(navigation: Navigator, featureScreens: List<Featur
     }
 }
 
+
+internal val LocalContentWidth by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
+    mutableStateOf(DpSize.Zero)
+}
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun LintAppContent(
@@ -250,11 +261,17 @@ fun LintAppContent(
                 )
             }
         ) {
-            val themeStore = LocalThemeStore.current
             LintOutlineCard(
-                modifier = Modifier.fillMaxSize().padding(it),
+                modifier = Modifier.fillMaxSize().padding(it)
+                    .drawWithContent {
+                        LocalContentWidth.value = DpSize(
+                            width = size.width.toDp(),
+                            height = size.height.toDp()
+                        )
+                        drawContent()
+                    },
                 colors = CardDefaults.outlinedCardColors()
-                    .copy(containerColor = if (themeStore.isDarkTheme) themeStore.colorSchemes.dark.background else themeStore.colorSchemes.light.background),
+                    .copy(containerColor = Color.Transparent),
             ) {
                 AnimatedContent(
                     targetState = screen,
