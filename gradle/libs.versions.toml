@@ -1,11 +1,11 @@
 [versions]
 compose = "1.6.2"
-compose-plugin = "1.6.0"
+compose-plugin = "1.6.2"
 junit = "4.13.2"
 kotlin = "1.9.22"
 androidx-compose-bom = "2024.04.01"
 lint-ui = "1.0.6"
-lint-toolkit = "1.0.1"
+lint-toolkit = "1.0.0"
 voyager = "1.0.0"
 ktor = "2.3.10"
 compose-fluent = "0.0.1-dev.7"
@@ -14,6 +14,8 @@ kotlinx-serialization = "1.6.3"
 
 decompose = "3.0.0"
 decompose-lifecycle = "2.0.0"
+
+rsyntaxtextarea = "3.4.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -50,6 +52,7 @@ coil-network-ktor-jvm = { module = "io.coil-kt.coil3:coil-network-ktor-jvm", ver
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "decompose-lifecycle" }
 decompose-extensions-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+rsyntaxtextarea = { module = "com.fifesoft:rsyntaxtextarea", version.ref = "rsyntaxtextarea" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

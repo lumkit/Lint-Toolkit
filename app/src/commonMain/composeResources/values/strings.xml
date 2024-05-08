@@ -45,4 +45,17 @@
     <string name="alert_payload_dumper">镜像提取</string>
     <string name="text_confirm">确定</string>
     <string name="text_task_canceled">任务已取消</string>
+    <string name="text_log_template">************* 软件发生错误 ************\n报错日期      ：%s\n系统类型      ：%s\n系统版本      ：%s\n软件版本      ：%s\n软件包名：      %s\n可点击右上角复制按钮复制，并提交给开发者\n开发者QQ：2205903933\n************* 软件发生错误 ************\n\n%s</string>
+    <string name="window_title_crash">Lint Toolkit异常捕获器</string>
+    <string name="text_copy_log">复制日志</string>
+    <string name="text_more">更多</string>
+    <string name="text_copied_log">已将日志复制到剪切板</string>
+    <string name="text_settings">设置</string>
+    <string name="text_settings_theme">主题设置</string>
+    <string name="text_theme_dark_mode">深色模式</string>
+    <string name="text_theme_dark_flow_system">跟随系统</string>
+    <string name="text_theme_dark_light">浅色</string>
+    <string name="text_theme_dark_dark">深色</string>
+    <string name="text_theme_scheme">主题颜色</string>
+    <string name="text_get_theme">获取主题</string>
 </resources>
